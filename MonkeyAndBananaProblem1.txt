@@ -1,0 +1,77 @@
+(deftemplate thing 
+	(slot name)
+	(slot on)
+)
+
+
+(deffacts monkey-and-banana "Initial Status"
+	(thing (name monkey) (on floor))		; The monkey is at floor level.
+	(thing (name chair) (on floor))		; The chair is at floor level.
+	(thing (name desk) (on floor))			; The desk is at floor level.
+	(thing (name banana) (on ceiling))		; The banana is hooked to the ceiling.
+)
+
+
+(defrule canGrab-rule "If monkey has reach to the banana, goal accomplished"
+	(thing (name monkey) (on chair))
+	(thing (name chair) (on desk))	
+	(thing (name desk) (on floor))
+	=>
+	(printout t "The monkey ate the banana!" crlf)
+)
+
+(defrule chairFloorToDesk
+	(and 
+		(thing (name chair) (on floor))
+		(thing (name desk) (on floor))
+	)
+	=>
+	(modify 2 (on desk))
+)
+
+(defrule monkeyFloorToChair
+	(and 
+		(thing (name chair) (on floor))
+		(thing (name monkey) (on floor))
+	)
+	=>
+	(modify 1 (on chair))
+)
+
+(defrule monkeyFloorToDesk
+	(and 
+		(thing (name monkey) (on floor))
+		(thing (name desk) (on floor))
+	)
+	=>
+	(modify 1(on desk))
+)
+
+(defrule monkeyChairToFloor
+	(and 
+		(thing (name chair) (on floor))
+		(thing (name monkey) (on chair))
+	)
+	=>
+	(modify 1 (on floor))
+)
+
+(defrule monkeyDeskToFloor
+	(and 
+		(thing (name desk) (on floor))
+		(thing (name monkey) (on desk))
+		(not (thing (name chair) (on desk)))
+	)
+	=>
+	(modify 1 (on floor))
+)
+
+(defrule monkeyDeskToChair
+	(and 
+		(thing (name desk) (on floor))
+		(thing (name chair) (on desk))
+		(thing (name monkey) (on desk))
+	)
+	=>
+	(modify 1 (on chair))
+)
